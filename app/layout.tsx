@@ -12,6 +12,11 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "ViraWeb | Proposta Técnica: Integração e Carga de Perfumaria",
   description: "Especificação técnica e proposta comercial para automação e cadastramento de perfumes no Mercado Livre, Shopee e TikTok Shop.",
+  icons: {
+    icon: "https://viraweb.online/favicon.png",
+    shortcut: "https://viraweb.online/favicon.png",
+    apple: "https://viraweb.online/favicon.png",
+  },
 };
 
 export default function RootLayout({
