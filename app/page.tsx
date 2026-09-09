@@ -15,11 +15,11 @@ interface Phase {
   percent: string;
   downPayment: number;
   finalPayment: number;
+  deliverablesSummary: string;
   categories: {
     title: string;
     items: string[];
   }[];
-  deliverablesSummary: string;
 }
 
 const PHASES: Phase[] = [
@@ -258,10 +258,10 @@ export default function ProposalPage() {
     let text = "";
     if (contextTitle === "completo") {
       text =
-        "Olá! Analisei a proposta técnica e financeira do Ecossistema NXTGEN (5 Fases - R$ 32.500,00) e gostaria de avançar na contratação do projeto completo.";
+        "Olá! Analisei a proposta técnica e financeira do Ecossistema NXTGEN (5 Fases - R$ 32.500,00) e gostaria de avançar na contratação do projeto completo com a ViraWeb.";
     } else if (contextTitle === "duvida") {
       text =
-        "Olá! Gostaria de tirar uma dúvida técnica referente à proposta do Ecossistema NXTGEN (Versão 2.1).";
+        "Olá! Gostaria de tirar uma dúvida técnica sobre a proposta do Ecossistema NXTGEN (v2.1).";
     } else {
       text = `Olá! Gostaria de aprovar e dar início à ${contextTitle} do Ecossistema NXTGEN.`;
     }
@@ -272,38 +272,59 @@ export default function ProposalPage() {
   const currentPhase = PHASES.find((p) => p.id === activeTab) || PHASES[0];
 
   return (
-    <div className="bg-white text-slate-900 min-h-screen">
-      {/* Header Institucional Limpo */}
-      <header className="border-b border-slate-200 bg-white sticky top-0 z-30">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="bg-white text-slate-900 min-h-screen selection:bg-slate-200">
+      {/* Linha de acento com o degradê oficial NXTGEN */}
+      <div className="h-1.5 w-full bg-gradient-to-r from-[#8562f3] via-[#6391f4] to-[#42b4f8]" />
+
+      {/* Header Institucional com Logos ViraWeb & NXTGEN */}
+      <header className="border-b border-slate-200 bg-white/95 backdrop-blur-sm sticky top-0 z-30">
+        <div className="max-w-5xl mx-auto px-6 py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          {/* Parceria ViraWeb + NXTGEN */}
           <div className="flex items-center gap-4">
-            <div className="bg-black px-3 py-1.5 rounded flex items-center justify-center">
+            <a
+              href="https://viraweb.online"
+              target="_blank"
+              rel="noreferrer"
+              className="transition-opacity hover:opacity-85"
+            >
+              <img
+                src="/viraweb.png"
+                alt="Logo ViraWeb"
+                className="h-8 w-auto object-contain"
+              />
+            </a>
+
+            <span className="text-slate-300 font-light text-lg">/</span>
+
+            <div className="bg-black px-3 py-1.5 rounded flex items-center justify-center transition-transform hover:scale-102">
               <img
                 src="/nxtgen-logo.png"
                 alt="Logo NXTGEN"
-                className="h-8 w-auto object-contain"
+                className="h-7 w-auto object-contain"
               />
             </div>
-            <div className="border-l border-slate-200 pl-4">
-              <div className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                ECOSSISTEMA NXTGEN
+
+            <div className="hidden md:block border-l border-slate-200 pl-3">
+              <div className="text-[11px] font-bold text-slate-900 tracking-wide">
+                Engenharia de Software
               </div>
-              <div className="text-[11px] text-slate-500">
-                The Future Pays More / Build. Don&apos;t Bet
+              <div className="text-[10px] text-slate-500">
+                Soluções & Automações Digitais
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Ações Rápidas (Cores ViraWeb) */}
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             <button
               onClick={() => openWhatsApp("duvida")}
-              className="px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 border border-slate-300 hover:bg-slate-50 rounded transition-colors"
+              className="px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 border border-slate-300 hover:bg-slate-50 rounded transition-all active:scale-95"
             >
               Dúvida Técnica
             </button>
             <button
               onClick={() => openWhatsApp("completo")}
-              className="px-4 py-1.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded transition-colors"
+              className="px-4 py-1.5 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded transition-all shadow-sm active:scale-95"
             >
               Aprovar Proposta
             </button>
@@ -311,50 +332,75 @@ export default function ProposalPage() {
         </div>
       </header>
 
-      {/* Faixa de Metadados do Documento */}
+      {/* Faixa de Metadados Limpa */}
       <div className="border-b border-slate-200 bg-slate-50 text-[11px] text-slate-600">
         <div className="max-w-5xl mx-auto px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <strong>Documento:</strong> Orçamento Técnico e Financeiro • <strong>Versão:</strong> 2.1
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-slate-900">PROPOSTA TÉCNICA E COMERCIAL</span>
+            <span className="text-slate-300">•</span>
+            <span>Versão 2.1</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-emerald-700 font-semibold">Orçamento Oficial</span>
           </div>
           <div className="text-slate-500">
-            <strong>Referência:</strong> Escopo Funcional, Gateway de Pagamentos e Apresentação
+            Ref: Escopo Funcional do App, Especificação de Pagamentos e Apresentação
           </div>
         </div>
       </div>
 
       <main className="max-w-5xl mx-auto px-6 py-12">
-        {/* Título Principal */}
+        {/* Bloco de Título Principal */}
         <section className="pb-10 border-b border-slate-200">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+          <div className="inline-block text-[11px] font-mono uppercase tracking-wider text-slate-500 mb-2 font-semibold">
             Documento de Escopo e Investimento por Fases
           </div>
+
           <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-950 tracking-tight leading-tight">
-            PROJETO DE ORÇAMENTO TÉCNICO E FINANCEIRO — ECOSSISTEMA NXTGEN
+            PROJETO DE ORÇAMENTO TÉCNICO E FINANCEIRO —{" "}
+            <span className="bg-gradient-to-r from-[#8562f3] via-[#6391f4] to-[#42b4f8] bg-clip-text text-transparent">
+              ECOSSISTEMA NXTGEN
+            </span>
           </h1>
-          <p className="text-slate-600 text-sm sm:text-base leading-relaxed mt-4">
+
+          <p className="text-slate-700 text-sm sm:text-base leading-relaxed mt-4 max-w-3xl">
             O <strong>NXTGEN</strong> é concebido como um ecossistema digital jovem para as Gerações Alpha e Z (
-            <em>&ldquo;The Future Pays More / Build. Don&apos;t Bet&rdquo;</em>), integrando benefícios, banking, eventos presenciais, investimentos e bem-estar em um ambiente único e modular.
+            <em className="font-semibold not-italic text-slate-900">&ldquo;The Future Pays More / Build. Don&apos;t Bet&rdquo;</em>),
+            integrando benefícios, banking, eventos presenciais, investimentos e bem-estar em um ambiente único e modular.
           </p>
 
-          <div className="mt-6 p-4 border border-slate-200 rounded bg-slate-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          {/* Card Resumo do Projeto (Cores ViraWeb & Degradê NXTGEN) */}
+          <div className="mt-8 p-6 border border-slate-200 rounded-lg bg-slate-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 transition-all duration-200 hover:border-slate-300 hover:shadow-sm">
             <div>
-              <div className="text-xs text-slate-500 uppercase tracking-wider">
-                Investimento Global (5 Fases)
+              <div className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
+                Investimento Global do Ecossistema (5 Fases)
               </div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-slate-950 mt-0.5">
+              <div className="text-3xl sm:text-4xl font-extrabold text-slate-950 mt-1">
                 R$ 32.500,00
               </div>
+              <div className="text-xs text-slate-600 mt-1">
+                50% no início da fase / 50% na homologação de cada marco
+              </div>
             </div>
-            <div className="text-xs text-slate-600 sm:text-right">
-              <div><strong>Forma de Pagamento:</strong> 50% no início da fase / 50% na homologação</div>
-              <div className="text-slate-500 mt-0.5">Execução e homologação independente por módulo</div>
+
+            <div className="flex flex-col sm:items-end gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => openWhatsApp("completo")}
+                className="w-full sm:w-auto px-6 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded text-xs transition-all shadow-sm active:scale-95 text-center"
+              >
+                Aprovar Projeto Completo
+              </button>
+              <span className="text-[11px] text-slate-500 text-center sm:text-right">
+                Contrato direto com marcos de entrega garantidos
+              </span>
             </div>
           </div>
         </section>
 
         {/* 1. Diretrizes Estratégicas do Projeto */}
-        <section className="py-10 border-b border-slate-200">
+        <section className="py-12 border-b border-slate-200">
+          <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#6880f2] mb-1">
+            Seção 01
+          </div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-950 mb-4">
             1. Diretrizes Estratégicas do Projeto
           </h2>
@@ -363,56 +409,64 @@ export default function ProposalPage() {
             <em>&ldquo;The Future Pays More / Build. Don&apos;t Bet&rdquo;</em>), integrando benefícios, banking, eventos presenciais, investimentos e bem-estar em um ambiente único e modular.
           </p>
 
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-4">
             Premissas Técnicas Centrais:
           </h3>
 
-          <div className="space-y-4 text-sm text-slate-700">
-            <div className="p-4 border border-slate-200 rounded bg-white">
-              <strong className="text-slate-950 block mb-1">
-                • Modularidade Total:
-              </strong>
-              <span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-5 border border-slate-200 rounded-lg bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300">
+              <div className="text-xs font-bold text-slate-900 mb-1.5 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#8562f3]" />
+                Modularidade Total
+              </div>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Cada fase entrega um módulo funcional independente e escalável, permitindo evolução contínua sem retrabalho.
-              </span>
+              </p>
             </div>
 
-            <div className="p-4 border border-slate-200 rounded bg-white">
-              <strong className="text-slate-950 block mb-1">
-                • Orquestração de Pagamentos & Split:
-              </strong>
-              <span>
-                Estrutura multi-gateway desacoplada (<code className="text-xs font-mono bg-slate-100 px-1 py-0.5 rounded">PaymentProvider</code> com suporte a Pagar.me, Mercado Pago e Asaas) com divisão automática de recebíveis entre a plataforma e os parceiros.
-              </span>
+            <div className="p-5 border border-slate-200 rounded-lg bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300">
+              <div className="text-xs font-bold text-slate-900 mb-1.5 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#6391f4]" />
+                Orquestração de Pagamentos & Split
+              </div>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Estrutura multi-gateway desacoplada (<code className="font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">PaymentProvider</code> com suporte a Pagar.me, Mercado Pago e Asaas) com divisão automática de recebíveis entre a plataforma e os parceiros.
+              </p>
             </div>
 
-            <div className="p-4 border border-slate-200 rounded bg-white">
-              <strong className="text-slate-950 block mb-1">
-                • Integrações Especializadas (BaaS e Corretora):
-              </strong>
-              <span>
+            <div className="p-5 border border-slate-200 rounded-lg bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300">
+              <div className="text-xs font-bold text-slate-900 mb-1.5 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#42b4f8]" />
+                Integrações Especializadas (BaaS e Corretora)
+              </div>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Front-end proprietário conectado a provedores regulados (BaaS para banco digital e corretora para investimentos), garantindo conformidade com BACEN e CVM.
-              </span>
+              </p>
             </div>
 
-            <div className="p-4 border border-slate-200 rounded bg-white">
-              <strong className="text-slate-950 block mb-1">
-                • Segurança e Anti-Fraude:
-              </strong>
-              <span>
+            <div className="p-5 border border-slate-200 rounded-lg bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300">
+              <div className="text-xs font-bold text-slate-900 mb-1.5 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-slate-900" />
+                Segurança e Anti-Fraude
+              </div>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Emissão de vouchers e ingressos via <strong>QR Code dinâmico com rotação de token temporizado</strong> para coibir capturas de tela e reaproveitamento indevido.
-              </span>
+              </p>
             </div>
           </div>
         </section>
 
         {/* 2. Quadro Resumo de Investimento (5 Fases) */}
-        <section className="py-10 border-b border-slate-200">
+        <section className="py-12 border-b border-slate-200">
+          <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#6880f2] mb-1">
+            Seção 02
+          </div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-950 mb-4">
             2. Quadro Resumo de Investimento (5 Fases)
           </h2>
 
-          <div className="overflow-x-auto border border-slate-200 rounded mb-6">
+          {/* Tabela de Investimento */}
+          <div className="overflow-x-auto border border-slate-200 rounded-lg mb-6">
             <table className="w-full text-left text-xs sm:text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold">
@@ -423,12 +477,12 @@ export default function ProposalPage() {
               </thead>
               <tbody className="divide-y divide-slate-200 text-slate-700">
                 {PHASES.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50">
+                  <tr key={p.id} className="hover:bg-slate-50 transition-colors">
                     <td className="py-3 px-4 text-center font-bold text-slate-900">
                       Fase {p.id}
                     </td>
                     <td className="py-3 px-4">
-                      <strong>{p.name}</strong> ({p.subtitle})
+                      <strong className="text-slate-950">{p.name}</strong> ({p.subtitle})
                     </td>
                     <td className="py-3 px-4 text-right font-bold text-slate-950">
                       {formatBRL(p.price)}
@@ -450,18 +504,30 @@ export default function ProposalPage() {
             </table>
           </div>
 
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded text-xs font-mono text-slate-700">
-            <div className="font-bold text-slate-900 mb-2">
-              Distribuição Financeira por Fase:
+          {/* Distribuição Gráfica com Degradê NXTGEN */}
+          <div className="p-5 bg-slate-50 border border-slate-200 rounded-lg">
+            <div className="flex justify-between items-center mb-2 text-xs font-semibold text-slate-700">
+              <span>Distribuição Financeira por Fase</span>
+              <span className="font-mono text-slate-500">Total: R$ 32.500,00 (100%)</span>
             </div>
-            <div className="space-y-1">
+
+            {/* Barra Contínua no degradê */}
+            <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden flex">
+              <div style={{ width: "12.3%" }} className="h-full bg-[#8562f3]" title="Fase 1: 12,3%" />
+              <div style={{ width: "16.9%" }} className="h-full bg-[#7375f5]" title="Fase 2: 16,9%" />
+              <div style={{ width: "20.0%" }} className="h-full bg-[#6485f2]" title="Fase 3: 20,0%" />
+              <div style={{ width: "23.1%" }} className="h-full bg-[#539ef5]" title="Fase 4: 23,1%" />
+              <div style={{ width: "27.7%" }} className="h-full bg-[#42b4f8]" title="Fase 5: 27,7%" />
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-200 text-xs font-mono text-slate-700 space-y-1">
               <div>Fase 1 (NXT PASS):&nbsp;&nbsp;&nbsp;&nbsp;[====]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R$ 4.000,00 (12,3%)</div>
               <div>Fase 2 (NXT BANK):&nbsp;&nbsp;&nbsp;&nbsp;[=====]&nbsp;&nbsp;&nbsp;&nbsp;R$ 5.500,00 (16,9%)</div>
               <div>Fase 3 (NXT LIVE):&nbsp;&nbsp;&nbsp;&nbsp;[======]&nbsp;&nbsp;&nbsp;R$ 6.500,00 (20,0%)</div>
               <div>Fase 4 (NXT INVEST):&nbsp;&nbsp;[=======]&nbsp;&nbsp;R$ 7.500,00 (23,1%)</div>
               <div>Fase 5 (NXT ME):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[=========] R$ 9.000,00 (27,7%)</div>
               <div className="text-slate-400">----------------------------------------------------</div>
-              <div className="font-bold text-slate-900">
+              <div className="font-bold text-slate-950">
                 TOTAL DO PROJETO:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R$ 32.500,00 (100%)
               </div>
             </div>
@@ -469,20 +535,23 @@ export default function ProposalPage() {
         </section>
 
         {/* 3. Detalhamento do Escopo por Fase */}
-        <section className="py-10 border-b border-slate-200">
+        <section className="py-12 border-b border-slate-200">
+          <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#6880f2] mb-1">
+            Seção 03
+          </div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-950 mb-2">
             3. Detalhamento do Escopo por Fase
           </h2>
           <p className="text-sm text-slate-600 mb-6">
-            Fluxo de entrega técnica independente:
+            Evolução arquitetural modular e independente:
           </p>
 
-          {/* Diagrama de fluxo simples */}
-          <div className="p-3 bg-slate-50 border border-slate-200 rounded text-xs font-mono text-slate-800 mb-8 overflow-x-auto whitespace-nowrap">
-            Fase 1: NXT PASS (R$ 4.000) → Fase 2: NXT BANK (R$ 5.500) → Fase 3: NXT LIVE (R$ 6.500) → Fase 4: NXT INVEST (R$ 7.500) → Fase 5: NXT ME (R$ 9.000)
+          {/* Pipeline Visual Sequencial */}
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-800 mb-8 overflow-x-auto whitespace-nowrap">
+            F1: NXT PASS (R$ 4.000) → F2: NXT BANK (R$ 5.500) → F3: NXT LIVE (R$ 6.500) → F4: NXT INVEST (R$ 7.500) → F5: NXT ME (R$ 9.000)
           </div>
 
-          {/* Navegador por Abas Limpo */}
+          {/* Seletor de Abas com Efeito Suave */}
           <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-3 mb-6">
             {PHASES.map((p) => {
               const isSelected = activeTab === p.id;
@@ -490,41 +559,47 @@ export default function ProposalPage() {
                 <button
                   key={p.id}
                   onClick={() => setActiveTab(p.id)}
-                  className={`px-3.5 py-1.5 text-xs font-bold rounded border transition-colors ${
+                  className={`px-4 py-2 text-xs font-bold rounded transition-all duration-150 relative ${
                     isSelected
-                      ? "bg-slate-900 text-white border-slate-900"
-                      : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                      ? "bg-slate-900 text-white shadow-sm"
+                      : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
                   }`}
                 >
                   Fase {p.id}: {p.name}
+                  {isSelected && (
+                    <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-gradient-to-r from-[#8562f3] to-[#42b4f8] rounded-full" />
+                  )}
                 </button>
               );
             })}
           </div>
 
-          {/* Card da Fase Ativa */}
-          <div className="border border-slate-200 rounded p-6 bg-white mb-8">
+          {/* Card Ativo com Animação Fade-In */}
+          <div
+            key={currentPhase.id}
+            className="animate-fade-in border border-slate-200 rounded-lg p-6 sm:p-8 bg-white shadow-sm mb-10"
+          >
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between pb-4 border-b border-slate-200 mb-6 gap-2">
               <div>
-                <span className="text-xs font-bold text-slate-500 uppercase">
-                  Fase {currentPhase.id}
+                <span className="text-xs font-bold text-[#6880f2] uppercase tracking-wider">
+                  Módulo 0{currentPhase.id}
                 </span>
-                <h3 className="text-xl font-extrabold text-slate-950">
-                  {currentPhase.name} — {currentPhase.subtitle}
+                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-950 mt-0.5">
+                  Fase {currentPhase.id}: {currentPhase.name} — {currentPhase.subtitle}
                 </h3>
               </div>
               <div className="text-left sm:text-right">
                 <span className="text-xs text-slate-500 block">Investimento:</span>
-                <span className="text-xl font-extrabold text-slate-950">
+                <span className="text-2xl font-extrabold text-slate-950">
                   {formatBRL(currentPhase.price)}
                 </span>
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {currentPhase.categories.map((cat, idx) => (
-                <div key={idx}>
-                  <h4 className="text-sm font-bold text-slate-950 mb-2">
+                <div key={idx} className="p-4 bg-slate-50/70 border border-slate-200 rounded">
+                  <h4 className="text-xs sm:text-sm font-bold text-slate-950 mb-2">
                     {cat.title}:
                   </h4>
                   <ul className="space-y-1.5 pl-4 text-xs sm:text-sm text-slate-700 list-disc">
@@ -538,41 +613,44 @@ export default function ProposalPage() {
               ))}
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <span className="text-xs text-slate-600">
-                Condição: 50% no início ({formatBRL(currentPhase.downPayment)}) e 50% na homologação ({formatBRL(currentPhase.finalPayment)})
-              </span>
+            <div className="mt-8 pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="text-xs text-slate-600">
+                <strong>Condições:</strong> 50% de entrada ({formatBRL(currentPhase.downPayment)}) e 50% na homologação ({formatBRL(currentPhase.finalPayment)}).
+              </div>
               <button
                 onClick={() => openWhatsApp(`Fase ${currentPhase.id}: ${currentPhase.name}`)}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded text-xs font-bold transition-colors"
+                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded text-xs font-bold transition-all active:scale-95"
               >
-                Aprovar Fase {currentPhase.id}
+                Aprovar Fase {currentPhase.id} ({formatBRL(currentPhase.price)})
               </button>
             </div>
           </div>
 
-          {/* Todas as Fases em Lista Completa */}
-          <div className="space-y-8 pt-4">
+          {/* Todas as Fases Documentadas na Íntegra */}
+          <div className="space-y-6 pt-2">
             <div className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Escopo Integral das 5 Fases:
+              Escopo Completo das 5 Fases:
             </div>
 
             {PHASES.map((p) => (
-              <div key={p.id} className="border border-slate-200 rounded p-6 bg-slate-50">
+              <div
+                key={p.id}
+                className="border border-slate-200 rounded-lg p-6 bg-slate-50/60 transition-all duration-200 hover:bg-slate-50"
+              >
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between pb-3 border-b border-slate-200 mb-4 gap-2">
                   <h3 className="text-base font-bold text-slate-950">
-                    Fase {p.id}: {p.name} — {p.subtitle}
+                    Fase {p.id}: {p.name} — <span className="font-normal text-slate-600">{p.subtitle}</span>
                   </h3>
                   <span className="text-sm font-bold text-slate-900">
-                    Investimento: {formatBRL(p.price)}
+                    {formatBRL(p.price)}
                   </span>
                 </div>
 
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {p.categories.map((cat, catIdx) => (
                     <div key={catIdx}>
                       <div className="text-xs font-bold text-slate-900 mb-1">
-                        • {cat.title}:
+                        • {cat.title}
                       </div>
                       <ul className="space-y-1 pl-4 text-xs text-slate-600 list-disc">
                         {cat.items.map((item, itemIdx) => (
@@ -590,7 +668,10 @@ export default function ProposalPage() {
         </section>
 
         {/* 4. Forma de Pagamento por Marcos de Homologação */}
-        <section className="py-10 border-b border-slate-200">
+        <section className="py-12 border-b border-slate-200">
+          <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#6880f2] mb-1">
+            Seção 04
+          </div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-950 mb-3">
             4. Forma de Pagamento por Marcos de Homologação
           </h2>
@@ -598,17 +679,20 @@ export default function ProposalPage() {
             A contratação e pagamento ocorrem por fase entregue e homologada:
           </p>
 
-          <div className="border border-slate-200 rounded bg-white divide-y divide-slate-200 text-xs sm:text-sm">
+          <div className="border border-slate-200 rounded-lg bg-white divide-y divide-slate-200 text-xs sm:text-sm">
             {PHASES.map((p) => (
-              <div key={p.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div
+                key={p.id}
+                className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-50 transition-colors"
+              >
                 <div>
                   <strong className="text-slate-950">
                     {p.id}. Fase {p.id} — {p.name}:
                   </strong>{" "}
-                  <span className="text-slate-700 font-semibold">{formatBRL(p.price)}</span>
+                  <span className="text-slate-900 font-bold">{formatBRL(p.price)}</span>
                 </div>
                 <div className="text-slate-600 text-xs font-mono">
-                  (50% no início: <strong>{formatBRL(p.downPayment)}</strong> e 50% na homologação: <strong>{formatBRL(p.finalPayment)}</strong>)
+                  (50% no início da fase: <strong>{formatBRL(p.downPayment)}</strong> e 50% na homologação: <strong>{formatBRL(p.finalPayment)}</strong>)
                 </div>
               </div>
             ))}
@@ -616,12 +700,15 @@ export default function ProposalPage() {
         </section>
 
         {/* 5. Resumo das Entregas Técnicas por Fase */}
-        <section className="py-10">
+        <section className="py-12">
+          <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#6880f2] mb-1">
+            Seção 05
+          </div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-950 mb-4">
             5. Resumo das Entregas Técnicas por Fase
           </h2>
 
-          <div className="overflow-x-auto border border-slate-200 rounded">
+          <div className="overflow-x-auto border border-slate-200 rounded-lg">
             <table className="w-full text-left text-xs sm:text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold">
@@ -633,7 +720,7 @@ export default function ProposalPage() {
               </thead>
               <tbody className="divide-y divide-slate-200 text-slate-700">
                 {PHASES.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50">
+                  <tr key={p.id} className="hover:bg-slate-50 transition-colors">
                     <td className="py-3 px-4 text-center font-bold text-slate-900">
                       {p.id}
                     </td>
@@ -658,7 +745,7 @@ export default function ProposalPage() {
                   <td className="py-3.5 px-4 text-center text-base text-slate-950 whitespace-nowrap">
                     {formatBRL(32500)}
                   </td>
-                  <td className="py-3.5 px-4 text-slate-950">
+                  <td className="py-3.5 px-4 text-slate-950 font-bold">
                     Ecossistema Completo NXTGEN Entregue e Homologado
                   </td>
                 </tr>
@@ -666,42 +753,64 @@ export default function ProposalPage() {
             </table>
           </div>
 
-          <div className="mt-10 p-6 border border-slate-200 rounded bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Bloco de Fechamento com Cores ViraWeb */}
+          <div className="mt-12 p-8 border border-slate-200 rounded-lg bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
             <div>
-              <div className="text-base font-bold text-slate-950">
-                Pronto para avançar com o Ecossistema NXTGEN?
+              <div className="inline-block text-[10px] font-bold uppercase tracking-wider text-amber-400 mb-1">
+                Avançar com a Engenharia
               </div>
-              <div className="text-xs text-slate-600 mt-1">
-                Converse com a equipe de engenharia para agendar o kickoff da Fase 1.
-              </div>
+              <h3 className="text-lg sm:text-xl font-bold">
+                Pronto para iniciar o Ecossistema NXTGEN?
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl leading-relaxed">
+                Confirmando a proposta comercial, realizamos o alinhamento técnico e o kickoff imediato da Fase 1 (NXT PASS).
+              </p>
             </div>
 
             <button
               onClick={() => openWhatsApp("completo")}
-              className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded text-xs font-bold transition-colors whitespace-nowrap"
+              className="px-6 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs rounded transition-all shadow-sm active:scale-95 whitespace-nowrap"
             >
-              Aprovar e Iniciar Projeto
+              Aprovar Proposta Agora
             </button>
           </div>
         </section>
       </main>
 
-      {/* Rodapé Limpo */}
+      {/* Rodapé Institucional com Ambas as Marcas */}
       <footer className="border-t border-slate-200 bg-slate-50 py-8 px-6 text-xs text-slate-600">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex items-center gap-3">
-            <div className="bg-black px-2.5 py-1 rounded">
+            <a
+              href="https://viraweb.online"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:opacity-80 transition-opacity"
+            >
+              <img
+                src="/viraweb.png"
+                alt="ViraWeb"
+                className="h-6 w-auto object-contain"
+              />
+            </a>
+
+            <span className="text-slate-300">|</span>
+
+            <div className="bg-black px-2 py-1 rounded">
               <img
                 src="/nxtgen-logo.png"
                 alt="NXTGEN"
-                className="h-6 w-auto object-contain"
+                className="h-5 w-auto object-contain"
               />
             </div>
-            <span>Ecossistema Digital NXTGEN • Versão 2.1</span>
+
+            <span className="hidden sm:inline text-slate-500">
+              Ecossistema Digital NXTGEN • Versão 2.1
+            </span>
           </div>
 
           <div className="text-slate-500">
-            Documento Técnico Comercial • ViraWeb Soluções Digitais
+            © 2026 ViraWeb Soluções Digitais • Todos os direitos reservados
           </div>
         </div>
       </footer>
