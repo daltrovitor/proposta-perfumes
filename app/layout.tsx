@@ -10,8 +10,9 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "ViraWeb | Proposta Técnica: Integração e Carga de Perfumaria",
-  description: "Especificação técnica e proposta comercial para automação e cadastramento de perfumes no Mercado Livre, Shopee e TikTok Shop.",
+  title: "NXTGEN | Projeto de Orçamento Técnico e Financeiro",
+  description:
+    "Documento de Escopo e Investimento por Fases (v2.1) — Ecossistema Digital NXTGEN (NXT PASS, NXT BANK, NXT LIVE, NXT INVEST, NXT ME).",
   icons: {
     icon: "https://viraweb.online/favicon.png",
     shortcut: "https://viraweb.online/favicon.png",
@@ -26,9 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${jakarta.variable} scroll-smooth`}>
-      <body className="bg-white text-slate-900 antialiased min-h-screen">
+      <body className="bg-slate-950 text-slate-100 antialiased min-h-screen selection:bg-indigo-500 selection:text-white">
         {children}
       </body>
     </html>
   );
 }
+
