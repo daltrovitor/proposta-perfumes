@@ -45,7 +45,7 @@ export default function ProposalPage() {
 
   const openWhatsApp = (context: string) => {
     triggerConfetti();
-    const phone = "5562996841378";
+    const phone = "5562992516554";
     const msg = `Olá! Gostaria de avançar na Proposta de Soluções Digitais da Construtora Queiroz Silveira (${context}) com a ViraWeb.`;
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
   };

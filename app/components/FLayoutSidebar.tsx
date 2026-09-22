@@ -66,7 +66,7 @@ export default function FLayoutSidebar({ onReplayIntro }: FLayoutSidebarProps) {
 
   const openWhatsApp = (context: "aprovar" | "duvida") => {
     triggerConfetti();
-    const phone = "5562996841378"; // WhatsApp comercial ViraWeb
+    const phone = "5562992516554"; // WhatsApp comercial ViraWeb
     let msg = "";
     if (context === "aprovar") {
       msg =
