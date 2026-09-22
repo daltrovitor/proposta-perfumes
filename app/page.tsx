@@ -1,819 +1,679 @@
+// Hello World
 "use client";
 
-import { useState } from "react";
-
-// ========================================================
-// CONFIGURAÇÕES INSTITUCIONAIS
-// ========================================================
-const WHATSAPP_NUMERO = "5562996841378";
-
-interface Phase {
-  id: number;
-  name: string;
-  subtitle: string;
-  price: number;
-  percent: string;
-  downPayment: number;
-  finalPayment: number;
-  deliverablesSummary: string;
-  categories: {
-    title: string;
-    items: string[];
-  }[];
-}
-
-const PHASES: Phase[] = [
-  {
-    id: 1,
-    name: "NXT PASS",
-    subtitle: "Clube de Benefícios & Fundação",
-    price: 4000,
-    percent: "12,3%",
-    downPayment: 2000,
-    finalPayment: 2000,
-    deliverablesSummary:
-      "Core App, Auth, Marketplace de Benefícios, QR Code dinâmico anti-screenshot, Payment Orchestrator multi-PSP, Split automático e Painel do Parceiro.",
-    categories: [
-      {
-        title: "Fundação do Aplicativo & Autenticação",
-        items: [
-          "Criação da arquitetura base do app mobile e painel web administrativo.",
-          "Fluxo de cadastro e autenticação segura (e-mail, senha, login social e verificação OTP).",
-          "Perfil inicial do usuário com régua básica de pontuação e gamificação (NXT SCORE).",
-        ],
-      },
-      {
-        title: "Marketplace NXT PASS",
-        items: [
-          "Catálogo de parceiros segmentado nas categorias de estilo de vida (Gastronomia, Moda, Viagens, Tecnologia, etc.).",
-          "Página individual de cada parceiro com logotipo, detalhes da oferta e percentual de benefício.",
-        ],
-      },
-      {
-        title: "Emissão e Validação de Vouchers",
-        items: [
-          "Geração de voucher com QR Code dinâmico anti-fraude (código temporizado de utilização única).",
-          "Histórico de cupons resgatados e utilizados pelo usuário.",
-        ],
-      },
-      {
-        title: "Camada de Orquestração de Pagamentos & Split (Base)",
-        items: [
-          "Módulo central desacoplado de gateway (PaymentProvider).",
-          "Integração com PSP de partida (ex: Pagar.me ou Mercado Pago) para processar Pix, Cartão e Boleto.",
-          "Motor de divisão automática (split payment) entre plataforma e lojista parceiro.",
-        ],
-      },
-      {
-        title: "Portal do Parceiro & Validador",
-        items: [
-          "Painel web responsivo onde o lojista parceiro acompanha ofertas e utiliza a câmera para ler e validar o QR Code do cliente no balcão.",
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "NXT BANK",
-    subtitle: "Banco Digital & Experiência BaaS",
-    price: 5500,
-    percent: "16,9%",
-    downPayment: 2750,
-    finalPayment: 2750,
-    deliverablesSummary:
-      "Integração BaaS, Conta Digital, Saldo em tempo real, Extrato, Pix (Chaves/QR/Copia-e-Cola), Cartão Virtual/Físico e Carteira Unificada.",
-    categories: [
-      {
-        title: "Conexão BaaS (Banking-as-a-Service)",
-        items: [
-          "Integração segura do front-end com APIs de instituição financeira parceira homologada (Doca, Celcoin, Zoop ou similar).",
-        ],
-      },
-      {
-        title: "Dashboard e Gestão de Conta Digital",
-        items: [
-          "Exibição de saldo em tempo real e extrato financeiro detalhado com filtros por período e tipo de movimentação.",
-        ],
-      },
-      {
-        title: "Operações Pix Completas",
-        items: [
-          "Envio e recebimento de Pix por chave (CPF/CNPJ, e-mail, telefone, chave aleatória).",
-          "Pix Copia e Cola e geração de QR Code Pix para cobrança.",
-          "Leitor de QR Code para pagamentos instantâneos.",
-        ],
-      },
-      {
-        title: "Gestão de Cartões",
-        items: [
-          "Emissão e visualização de dados de cartão virtual para compras seguras na internet.",
-          "Controles de segurança: bloqueio e desbloqueio instantâneo do cartão pelo app.",
-          "Solicitação e acompanhamento de entrega de cartão físico.",
-        ],
-      },
-      {
-        title: "Carteira Central NXT",
-        items: [
-          "Consolidação na mesma tela: saldo bancário, cupons do NXT PASS e pontos acumulados.",
-        ],
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "NXT LIVE",
-    subtitle: "Eventos, Ingressos & Corridas",
-    price: 6500,
-    percent: "20,0%",
-    downPayment: 3250,
-    finalPayment: 3250,
-    deliverablesSummary:
-      "Catálogo de Eventos, Compra de Ingressos NXT UP, App de Validação de Portaria, Inscrições e Kits NXT RUN e Funil de Startups NXT FOUNDERS.",
-    categories: [
-      {
-        title: "Vitrine de Eventos Presenciais",
-        items: [
-          "Catálogo de eventos do ecossistema (NXT Founders, NXT Session, Ctrl + NXT, NXT Talks, etc.) com detalhes de data, local e lotes de ingressos.",
-        ],
-      },
-      {
-        title: "NXT UP (Compra de Ingressos)",
-        items: [
-          "Fluxo de compra direto no app: seleção de lotes → checkout transparente no orquestrador → confirmação instantânea.",
-          "Emissão de ingresso digital na carteira do usuário com QR Code individual de acesso.",
-        ],
-      },
-      {
-        title: "Controle de Portaria & Acesso",
-        items: [
-          "Módulo do organizador para validação rápida de ingressos por leitura de QR Code, prevenção de duplicidade e check-in em tempo real.",
-        ],
-      },
-      {
-        title: "NXT RUN (Módulo de Corridas de Rua)",
-        items: [
-          "Inscrição em etapas de corrida, escolha de modalidade/categoria e seleção de tamanho de kit/camiseta.",
-          "Termo de responsabilidade digital e voucher QR para retirada física de kits.",
-          "Consulta pós-evento de tempos, posições e classificação geral.",
-        ],
-      },
-      {
-        title: "NXT FOUNDERS",
-        items: [
-          "Formulário de submissão de startups e projetos para Rafael Molina, com upload de apresentação/pitch deck e links de vídeo.",
-          "Esteira de análise com funil de aprovação (Enviada → Em Análise → Selecionada).",
-        ],
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: "NXT INVEST",
-    subtitle: "Plataforma de Investimentos",
-    price: 7500,
-    percent: "23,1%",
-    downPayment: 3750,
-    finalPayment: 3750,
-    deliverablesSummary:
-      "Conexão com Corretora CVM, Esteira KYC/AML, Questionário de Suitability, Vitrine de Fundos/Renda Fixa/Ações e Posição Patrimonial.",
-    categories: [
-      {
-        title: "Integração com Corretora Parceira",
-        items: [
-          "Conexão do aplicativo com APIs de corretora regulada pela CVM/BACEN (a custódia permanece com a instituição credenciada).",
-        ],
-      },
-      {
-        title: "Esteira de Onboarding de Investidor",
-        items: [
-          "Formulário com esteira de KYC avançada e prevenção à lavagem de dinheiro (AML).",
-          "Questionário de Perfil de Investidor (Suitability) para recomendação adequada de produtos.",
-        ],
-      },
-      {
-        title: "Catálogo de Investimentos Descomplicado",
-        items: [
-          "Vitrine simplificada para jovens: Renda Fixa, Fundos de Investimento proprietários (Fundo Futuro, Riqueza NXT) e Ações/ETFs.",
-        ],
-      },
-      {
-        title: "Área do Investidor",
-        items: [
-          "Visualização de patrimônio investido, histórico de aportes, rentabilidade consolidada e extratos de posição.",
-          "Integração com as metas financeiras do jovem no aplicativo.",
-        ],
-      },
-    ],
-  },
-  {
-    id: 5,
-    name: "NXT ME",
-    subtitle: "Saúde Emocional, Mentoria & Conexões",
-    price: 9000,
-    percent: "27,7%",
-    downPayment: 4500,
-    finalPayment: 4500,
-    deliverablesSummary:
-      "Agendamento de Psicólogos com blindagem LGPD, Mentoria Rafael Molina com Pitch 60s (NXT LEVEL) e Rede Social sem fotos por propósito (NXT CIRCLE).",
-    categories: [
-      {
-        title: "NXT ME (Saúde Emocional & Psicologia)",
-        items: [
-          "Catálogo de psicólogos e terapeutas credenciados voltados para a Geração Z (\"Cuidar da cabeça também é subir de nível\").",
-          "Fluxo de agendamento de consultas com aplicação de benefício exclusivo NXTGEN.",
-          "Blindagem LGPD & Dados Sensíveis: Criptografia ponta a ponta e separação de registros clínicos e histórico de atendimento de saúde.",
-          "Liquidação financeira da consulta via saldo da conta NXT BANK.",
-        ],
-      },
-      {
-        title: "NXT LEVEL (Mentoria de Rafael Molina)",
-        items: [
-          "Envio de pitch em vídeo vertical de 60 segundos direto pelo app (\"Zero to One\").",
-          "Área exclusiva do mentorado: agenda de encontros, biblioteca de materiais, metas de crescimento e acompanhamento de evolução da startup.",
-        ],
-      },
-      {
-        title: "NXT CIRCLE (Conexões Humanas \"Unplug\")",
-        items: [
-          "Algoritmo de conexão baseado em intenções, afinidades intelectuais e frases de propósito (\"sem foto inicial\").",
-          "Cards de descoberta com ações \"Interessado\" e \"Passo\".",
-          "Chat em tempo real após match mútuo com desbloqueio gradual de dados e ferramentas ativas de moderação e denúncia.",
-        ],
-      },
-    ],
-  },
-];
+import React, { useState } from "react";
+import Image from "next/image";
+import IntroViraweb from "./components/IntroViraweb";
+import FLayoutSidebar from "./components/FLayoutSidebar";
+import RobotFlowChart from "./components/RobotFlowChart";
+import ProposalCalculator from "./components/ProposalCalculator";
+import {
+  Bot,
+  Layers,
+  FileCheck2,
+  FolderSync,
+  ClipboardList,
+  Shield,
+  ArrowRight,
+  CheckCircle2,
+  Calendar,
+  Building2,
+  HardHat,
+  MessageCircle,
+  FileSpreadsheet,
+  Workflow,
+  Sparkles,
+  ExternalLink,
+  ChevronRight,
+  FileText,
+  Clock,
+  Printer,
+} from "lucide-react";
+import confetti from "canvas-confetti";
 
 export default function ProposalPage() {
-  const [activeTab, setActiveTab] = useState<number>(1);
+  const [showIntro, setShowIntro] = useState<boolean>(true);
 
-  const formatBRL = (val: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(val);
+  const triggerConfetti = () => {
+    confetti({
+      particleCount: 90,
+      spread: 80,
+      origin: { y: 0.6 },
+      colors: ["#8e1529", "#0d233e", "#e69900", "#ffffff"],
+    });
   };
 
-  const openWhatsApp = (contextTitle: string) => {
-    let text = "";
-    if (contextTitle === "completo") {
-      text =
-        "Olá! Analisei a proposta técnica e financeira do Ecossistema NXTGEN (5 Fases - R$ 32.500,00) e gostaria de avançar na contratação do projeto completo com a ViraWeb.";
-    } else if (contextTitle === "duvida") {
-      text =
-        "Olá! Gostaria de tirar uma dúvida técnica sobre a proposta do Ecossistema NXTGEN (v2.1).";
-    } else {
-      text = `Olá! Gostaria de aprovar e dar início à ${contextTitle} do Ecossistema NXTGEN.`;
-    }
-    const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank");
+  const openWhatsApp = (context: string) => {
+    triggerConfetti();
+    const phone = "5562996841378";
+    const msg = `Olá! Gostaria de avançar na Proposta de Soluções Digitais da Construtora Queiroz Silveira (${context}) com a ViraWeb.`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
   };
-
-  const currentPhase = PHASES.find((p) => p.id === activeTab) || PHASES[0];
 
   return (
-    <div className="bg-white text-slate-900 min-h-screen selection:bg-slate-200">
-      {/* Linha de acento com o degradê oficial NXTGEN */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-[#8562f3] via-[#6391f4] to-[#42b4f8]" />
+    <>
+      {/* Animação de Entrada Mandatória ViraWeb (letra por letra a cada 0.6s) */}
+      {showIntro && <IntroViraweb onComplete={() => setShowIntro(false)} />}
 
-      {/* Header Institucional com Logos ViraWeb & NXTGEN */}
-      <header className="border-b border-slate-200 bg-white/95 backdrop-blur-sm sticky top-0 z-30">
-        <div className="max-w-5xl mx-auto px-6 py-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          {/* Parceria ViraWeb + NXTGEN */}
-          <div className="flex items-center gap-4">
-            <a
-              href="https://viraweb.online"
-              target="_blank"
-              rel="noreferrer"
-              className="transition-opacity hover:opacity-85"
-            >
-              <img
-                src="/viraweb.png"
-                alt="Logo ViraWeb"
-                className="h-8 w-auto object-contain"
-              />
-            </a>
-
-            <span className="text-slate-300 font-light text-lg">/</span>
-
-            <div className="bg-black px-3 py-1.5 rounded flex items-center justify-center transition-transform hover:scale-102">
-              <img
-                src="/nxtgen-logo.png"
-                alt="Logo NXTGEN"
-                className="h-7 w-auto object-contain"
-              />
-            </div>
-
-            <div className="hidden md:block border-l border-slate-200 pl-3">
-              <div className="text-[11px] font-bold text-slate-900 tracking-wide">
-                Engenharia de Software
-              </div>
-              <div className="text-[10px] text-slate-500">
-                Soluções & Automações Digitais
-              </div>
-            </div>
-          </div>
-
-          {/* Ações Rápidas (Cores ViraWeb) */}
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-            <button
-              onClick={() => openWhatsApp("duvida")}
-              className="px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 border border-slate-300 hover:bg-slate-50 rounded transition-all active:scale-95"
-            >
-              Dúvida Técnica
-            </button>
-            <button
-              onClick={() => openWhatsApp("completo")}
-              className="px-4 py-1.5 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded transition-all shadow-sm active:scale-95"
-            >
-              Aprovar Proposta
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Faixa de Metadados Limpa */}
-      <div className="border-b border-slate-200 bg-slate-50 text-[11px] text-slate-600">
-        <div className="max-w-5xl mx-auto px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-900">PROPOSTA TÉCNICA E COMERCIAL</span>
-            <span className="text-slate-300">•</span>
-            <span>Versão 2.1</span>
-            <span className="text-slate-300">•</span>
-            <span className="text-emerald-700 font-semibold">Orçamento Oficial</span>
-          </div>
-          <div className="text-slate-500">
-            Ref: Escopo Funcional do App, Especificação de Pagamentos e Apresentação
-          </div>
-        </div>
-      </div>
-
-      <main className="max-w-5xl mx-auto px-6 py-12">
-        {/* Bloco de Título Principal */}
-        <section className="pb-10 border-b border-slate-200">
-          <div className="inline-block text-[11px] font-mono uppercase tracking-wider text-slate-500 mb-2 font-semibold">
-            Documento de Escopo e Investimento por Fases
-          </div>
-
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-950 tracking-tight leading-tight">
-            PROJETO DE ORÇAMENTO TÉCNICO E FINANCEIRO —{" "}
-            <span className="bg-gradient-to-r from-[#8562f3] via-[#6391f4] to-[#42b4f8] bg-clip-text text-transparent">
-              ECOSSISTEMA NXTGEN
-            </span>
-          </h1>
-
-          <p className="text-slate-700 text-sm sm:text-base leading-relaxed mt-4 max-w-3xl">
-            O <strong>NXTGEN</strong> é concebido como um ecossistema digital jovem para as Gerações Alpha e Z (
-            <em className="font-semibold not-italic text-slate-900">&ldquo;The Future Pays More / Build. Don&apos;t Bet&rdquo;</em>),
-            integrando benefícios, banking, eventos presenciais, investimentos e bem-estar em um ambiente único e modular.
-          </p>
-
-          {/* Card Resumo do Projeto (Cores ViraWeb & Degradê NXTGEN) */}
-          <div className="mt-8 p-6 border border-slate-200 rounded-lg bg-slate-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 transition-all duration-200 hover:border-slate-300 hover:shadow-sm">
-            <div>
-              <div className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
-                Investimento Global do Ecossistema (5 Fases)
-              </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-slate-950 mt-1">
-                R$ 32.500,00
-              </div>
-              <div className="text-xs text-slate-600 mt-1">
-                50% no início da fase / 50% na homologação de cada marco
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:items-end gap-2 w-full sm:w-auto">
-              <button
-                onClick={() => openWhatsApp("completo")}
-                className="w-full sm:w-auto px-6 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded text-xs transition-all shadow-sm active:scale-95 text-center"
+      <div className="min-h-screen bg-white text-zinc-900 flex flex-col">
+        {/* Cabeçalho Institucional Fixo */}
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-zinc-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            {/* Parceria de Marcas: ViraWeb & Construtora Queiroz Silveira */}
+            <div className="flex items-center gap-3 sm:gap-5">
+              <a
+                href="https://viraweb.online"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 transition-opacity hover:opacity-85 cursor-pointer"
+                title="ViraWeb Soluções Digitais"
               >
-                Aprovar Projeto Completo
+                <Image
+                  src="/viraweb.png"
+                  alt="ViraWeb Soluções Digitais"
+                  width={140}
+                  height={42}
+                  priority
+                  className="h-7 sm:h-8 w-auto object-contain"
+                />
+              </a>
+
+              <div className="h-5 w-px bg-zinc-300" aria-hidden="true" />
+
+              <div className="flex items-center gap-2">
+                <Image
+                  src="/queiroz-silveira.png"
+                  alt="Construtora Queiroz Silveira"
+                  width={110}
+                  height={36}
+                  priority
+                  className="h-6 sm:h-7 w-auto object-contain"
+                />
+              </div>
+            </div>
+
+            {/* Ações Rápidas no Cabeçalho */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono font-medium text-zinc-600 bg-zinc-100 rounded-sm border border-zinc-200">
+                <Calendar className="w-3.5 h-3.5 text-[#8e1529]" />
+                <span>Setembro de 2026</span>
+              </span>
+
+              <button
+                type="button"
+                onClick={() => openWhatsApp("Aprovação Geral")}
+                className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-[#8e1529] hover:bg-[#780f21] text-white text-xs font-bold uppercase tracking-wider rounded-sm cursor-pointer transition-colors shadow-xs"
+                aria-label="Aprovar proposta comercial via WhatsApp"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Aprovar Proposta</span>
+                <span className="sm:hidden">Aprovar</span>
               </button>
-              <span className="text-[11px] text-slate-500 text-center sm:text-right">
-                Contrato direto com marcos de entrega garantidos
+
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-medium rounded-sm cursor-pointer transition-colors"
+                aria-label="Exportar proposta em PDF"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>PDF</span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Faixa de Destaque Superior (Varredura Topo do Padrão F) */}
+        <section aria-label="Resumo Executivo" className="border-b border-zinc-200 bg-zinc-50/70">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 text-zinc-700">
+              <span className="inline-block w-2 h-2 rounded-full bg-[#8e1529]" />
+              <span className="font-semibold text-zinc-900">Documento Oficial:</span>
+              <span>Proposta de Soluções Digitais • Ref. Reunião 16/09 (Marília V. & Rodrigo)</span>
+            </div>
+            <div className="flex items-center gap-4 text-zinc-500 font-mono text-[11px]">
+              <span>2 Soluções Estruturadas</span>
+              <span>•</span>
+              <span className="text-[#8e1529] font-bold">Investimento Consolidado: R$ 6.250,00</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Corpo Principal com Composição em Padrão F */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex-1 w-full">
+          <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 items-start">
+            {/* Coluna Esquerda: Trilha Lateral F-Pattern (Sidebar) */}
+            <FLayoutSidebar onReplayIntro={() => setShowIntro(true)} />
+
+            {/* Coluna Direita: Área de Leitura Principal */}
+            <main id="main-content" className="flex-1 w-full space-y-16">
+              {/* ========================================================
+                  SEÇÃO 00: APRESENTAÇÃO INSTITUCIONAL & CONTEXTO
+              ======================================================== */}
+              <section id="apresentacao" className="scroll-mt-24 space-y-6">
+                <div className="border-b border-zinc-200 pb-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-[11px] font-mono uppercase tracking-widest text-[#8e1529] font-bold px-2 py-0.5 bg-[#8e1529]/10 rounded-sm">
+                      PROPOSTA COMERCIAL | SETEMBRO DE 2026
+                    </span>
+                  </div>
+
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-zinc-900 leading-tight">
+                    Proposta de Soluções Digitais
+                  </h1>
+
+                  <p className="text-lg sm:text-xl font-medium text-[#8e1529] mt-2">
+                    Construtora Queiroz Silveira
+                  </p>
+
+                  <p className="text-sm sm:text-base text-zinc-600 mt-3 max-w-3xl leading-relaxed">
+                    Desenvolvimento e implantação de soluções digitais dedicadas para a modernização das rotinas operacionais da construtora, abrangendo a automação completa do fluxo de contratos com Clicksign e a plataforma centralizada de gestão de projetos, diário de obra e fichas de verificação.
+                  </p>
+                </div>
+
+                {/* Contexto da Solicitação da Queiroz Silveira */}
+                <div className="p-5 bg-zinc-50 border border-zinc-200 rounded-sm">
+                  <div className="flex items-start gap-3">
+                    <Building2 className="w-5 h-5 text-[#8e1529] flex-shrink-0 mt-0.5" />
+                    <div className="space-y-1 text-xs sm:text-sm text-zinc-700">
+                      <p className="font-bold text-zinc-900">
+                        Alinhamento de Escopo (Conforme Reunião do dia 16/09 com Marília V. e Rodrigo):
+                      </p>
+                      <p className="text-zinc-600 leading-relaxed">
+                        A proposta foi dimensionada especificamente para atender às três demandas prioritárias da construtora:
+                        (1) centralização e armazenamento de projetos similar ao Autodoc e à Maleta do Engenheiro;
+                        (2) robô automatizado para transferência de contratos concluídos no Clicksign para pastas de rede do servidor; e
+                        (3) aplicação para registro de FVs (Fichas de Verificação) e Diário de Obra diário.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Os 2 Pilares Fundamentais em Destaque */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                  <div className="p-6 border border-zinc-200 rounded-sm bg-white hover:border-zinc-300 transition-colors">
+                    <div className="w-10 h-10 rounded-sm bg-[#8e1529]/10 text-[#8e1529] flex items-center justify-center font-mono font-bold text-sm">
+                      01
+                    </div>
+                    <h3 className="text-lg font-bold text-zinc-900 mt-4">
+                      Automação dos Contratos
+                    </h3>
+                    <p className="text-xs sm:text-sm text-zinc-600 mt-2 leading-relaxed">
+                      Arquivamento automático de cada contrato assinado por todos os signatários, organizado por empreendimento e cliente, com geração de relatório consolidado mensal no 1º dia útil.
+                    </p>
+                    <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs font-mono">
+                      <span className="text-zinc-500">Desenvolvimento Robô:</span>
+                      <span className="font-bold text-zinc-900">R$ 2.000,00</span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 border border-zinc-200 rounded-sm bg-white hover:border-zinc-300 transition-colors">
+                    <div className="w-10 h-10 rounded-sm bg-[#0d233e]/10 text-[#0d233e] flex items-center justify-center font-mono font-bold text-sm">
+                      02
+                    </div>
+                    <h3 className="text-lg font-bold text-zinc-900 mt-4">
+                      Projetos e Acompanhamento de Obras
+                    </h3>
+                    <p className="text-xs sm:text-sm text-zinc-600 mt-2 leading-relaxed">
+                      Compartilhamento de arquivos por disciplina técnica, notificações ativas de movimentação (retirada/devolução) e registro diário dos serviços executados (Diário de Obra e FVs).
+                    </p>
+                    <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs font-mono">
+                      <span className="text-zinc-500">Condição Especial QS:</span>
+                      <span className="font-bold text-[#8e1529]">R$ 4.250,00</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* ========================================================
+                  SEÇÃO 01: PRODUTO 01 — AUTOMAÇÃO DOS CONTRATOS (ROBÔ)
+              ======================================================== */}
+              <section id="produto-01-robo" className="scroll-mt-24 space-y-6 pt-6 border-t border-zinc-200">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2.5 py-0.5 rounded-sm bg-zinc-900 text-white font-mono text-[10px] uppercase font-bold tracking-wider">
+                      PRODUTO 01
+                    </span>
+                    <span className="text-xs font-mono text-zinc-500">Automação Contratual</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
+                    Automação dos Contratos (Robô Clicksign)
+                  </h2>
+                  <p className="text-sm text-zinc-600 mt-1 max-w-2xl">
+                    Integração robótica em segundo plano para eliminação total do trabalho manual de conferência, download e renomeação de contratos finalizados.
+                  </p>
+                </div>
+
+                {/* 3 Blocos de Funcionamento */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 border border-zinc-200 rounded-sm bg-white">
+                    <div className="text-xs font-mono text-[#8e1529] font-bold">FLUXO EM TEMPO REAL</div>
+                    <h3 className="font-bold text-sm text-zinc-900 mt-1">A cada contrato concluído</h3>
+                    <p className="text-xs text-zinc-600 mt-2 leading-relaxed">
+                      Assim que todos assinarem e o Clicksign disparar o contrato finalizado, o robô salva o documento na pasta exata do empreendimento e do cliente.
+                    </p>
+                  </div>
+
+                  <div className="p-4 border border-zinc-200 rounded-sm bg-white">
+                    <div className="text-xs font-mono text-[#8e1529] font-bold">FECHAMENTO MENSAL</div>
+                    <h3 className="font-bold text-sm text-zinc-900 mt-1">Relatório no 1º dia útil</h3>
+                    <p className="text-xs text-zinc-600 mt-2 leading-relaxed">
+                      O robô faz o fechamento contábil e documental do mês anterior, gerando um relatório completo de todos os contratos assinados naquele período.
+                    </p>
+                  </div>
+
+                  <div className="p-4 border border-zinc-200 rounded-sm bg-white">
+                    <div className="text-xs font-mono text-[#8e1529] font-bold">AUDITORIA SEGURA</div>
+                    <h3 className="font-bold text-sm text-zinc-900 mt-1">Histórico para consulta</h3>
+                    <p className="text-xs text-zinc-600 mt-2 leading-relaxed">
+                      Cada relatório gerado é salvo na pasta de relatórios institucionais da Queiroz Silveira, devidamente organizada pelo mês de referência.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Diagrama Arquitetural do Robô */}
+                <RobotFlowChart />
+
+                {/* Tabela de Investimento da Automação */}
+                <div className="border border-zinc-200 rounded-sm overflow-hidden bg-white">
+                  <div className="bg-zinc-50 px-5 py-3 border-b border-zinc-200 flex items-center justify-between">
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-700">
+                      Investimento na Automação (Produto 01)
+                    </span>
+                    <span className="text-xs text-zinc-500 font-mono">Valores Fechados</span>
+                  </div>
+                  <table className="w-full text-left text-xs sm:text-sm">
+                    <thead>
+                      <tr className="border-b border-zinc-200 text-zinc-500 font-mono text-[11px] uppercase bg-white">
+                        <th className="py-3 px-4 font-semibold">Item</th>
+                        <th className="py-3 px-4 font-semibold">Descrição Técnica</th>
+                        <th className="py-3 px-4 font-semibold text-right">Valor Proposto</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-zinc-200">
+                      <tr>
+                        <td className="py-3.5 px-4 font-bold text-zinc-900">Desenvolvimento do robô</td>
+                        <td className="py-3.5 px-4 text-zinc-600">
+                          Desenvolvimento completo do script robótico de integração com API Clicksign, regras de nomenclatura e salvamento em rede.
+                        </td>
+                        <td className="py-3.5 px-4 font-mono font-bold text-zinc-900 text-right">
+                          R$ 2.000,00
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-3.5 px-4 font-bold text-zinc-900">Implementação por CNPJ</td>
+                        <td className="py-3.5 px-4 text-zinc-600">
+                          Setup da estrutura de pastas, chaves de webhook e parametrização do robô por empresa/SPE da construtora.
+                        </td>
+                        <td className="py-3.5 px-4 font-mono font-semibold text-zinc-700 text-right">
+                          R$ 500,00 <span className="text-xs text-zinc-500 font-normal">por CNPJ</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-3.5 px-4 font-bold text-zinc-900">Manutenção do robô</td>
+                        <td className="py-3.5 px-4 text-zinc-600">
+                          Monitoramento de integridade, logs de falhas e garantia de funcionamento contínuo do serviço.
+                        </td>
+                        <td className="py-3.5 px-4 font-mono font-semibold text-zinc-700 text-right">
+                          R$ 100,00 <span className="text-xs text-zinc-500 font-normal">por CNPJ*</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div className="p-3 bg-zinc-50/70 border-t border-zinc-200 text-[11px] text-zinc-500 font-mono">
+                    *Periodicidade da manutenção do robô: a confirmar na etapa de fechamento comercial.
+                  </div>
+                </div>
+              </section>
+
+              {/* ========================================================
+                  SEÇÃO 02: PRODUTO 02 — GESTÃO DE PROJETOS E OBRAS
+              ======================================================== */}
+              <section id="produto-02-sistema" className="scroll-mt-24 space-y-6 pt-6 border-t border-zinc-200">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2.5 py-0.5 rounded-sm bg-[#8e1529] text-white font-mono text-[10px] uppercase font-bold tracking-wider">
+                      PRODUTO 02
+                    </span>
+                    <span className="text-xs font-mono text-zinc-500">Plataforma Web & Mobile</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
+                    Gestão de Projetos e Obras
+                  </h2>
+                  <p className="text-sm text-zinc-600 mt-1 max-w-2xl">
+                    Ambiente unificado para controle de engenharia, armazenamento de projetos, notificações em tempo real, diário de obra e fichas de verificação (FVs).
+                  </p>
+                </div>
+
+                {/* Grid dos Módulos do Sistema */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Módulo 1: Projetos em Pastas */}
+                  <div className="p-5 border border-zinc-200 rounded-sm bg-white space-y-2">
+                    <div className="flex items-center gap-2 text-[#8e1529]">
+                      <Layers className="w-5 h-5" />
+                      <h3 className="font-bold text-sm text-zinc-900">Projetos Organizados em Pastas</h3>
+                    </div>
+                    <p className="text-xs text-zinc-600 leading-relaxed">
+                      Estruturação por disciplinas (Elétrico, Estrutural, Hidráulico, Arquitetura, etc.). Profissionais credenciados consultam e realizam upload e download com agilidade similar ao Autodoc e Maleta do Engenheiro.
+                    </p>
+                  </div>
+
+                  {/* Módulo 2: Versionamento no Mesmo Local */}
+                  <div className="p-5 border border-zinc-200 rounded-sm bg-white space-y-2">
+                    <div className="flex items-center gap-2 text-[#8e1529]">
+                      <FolderSync className="w-5 h-5" />
+                      <h3 className="font-bold text-sm text-zinc-900">Alterações no Mesmo Local</h3>
+                    </div>
+                    <p className="text-xs text-zinc-600 leading-relaxed">
+                      Ao atualizar uma prancha ou arquivo técnico, o profissional envia a nova versão para a mesma pasta. O sistema versiona e notifica automaticamente todos os usuários com acesso ativo.
+                    </p>
+                  </div>
+
+                  {/* Módulo 3: Movimentação Acompanhada */}
+                  <div className="p-5 border border-zinc-200 rounded-sm bg-white space-y-2">
+                    <div className="flex items-center gap-2 text-[#8e1529]">
+                      <Workflow className="w-5 h-5" />
+                      <h3 className="font-bold text-sm text-zinc-900">Movimentação Acompanhada</h3>
+                    </div>
+                    <p className="text-xs text-zinc-600 leading-relaxed">
+                      O sistema registra e notifica a retirada do projeto para trabalho e a subsequente devolução da versão atualizada, garantindo que ninguém trabalhe com plantas defasadas na obra.
+                    </p>
+                  </div>
+
+                  {/* Módulo 4: Diário de Obra & FVs */}
+                  <div className="p-5 border border-zinc-200 rounded-sm bg-white space-y-2">
+                    <div className="flex items-center gap-2 text-[#8e1529]">
+                      <HardHat className="w-5 h-5" />
+                      <h3 className="font-bold text-sm text-zinc-900">Diário de Obra & Fichas de Verificação (FVs)</h3>
+                    </div>
+                    <p className="text-xs text-zinc-600 leading-relaxed">
+                      Histórico diário do canteiro de obras: registro dos serviços executados no dia, observações climáticas/equipe, upload de FVs e fotos do andamento, com consulta permanente em qualquer dispositivo.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Detalhamento dos Módulos Administrativos (Conforme Imagem enviada) */}
+                <div className="p-5 bg-zinc-50 border border-zinc-200 rounded-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Shield className="w-4 h-4 text-[#8e1529]" />
+                    <span className="text-xs font-mono font-bold uppercase text-zinc-800">
+                      Módulos de Gestão e Segurança Inclusos
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs text-zinc-600">
+                    <div className="p-3 bg-white border border-zinc-200 rounded-sm">
+                      <span className="font-bold text-zinc-900 block mb-1">Painel Admin & Auth</span>
+                      Controle de acessos, criação de classes de usuários e permissões granulares por cargo.
+                    </div>
+                    <div className="p-3 bg-white border border-zinc-200 rounded-sm">
+                      <span className="font-bold text-zinc-900 block mb-1">Gestão de Obras (CRUD)</span>
+                      Cadastro de empreendimentos, status da obra em tempo real e galeria de fotos do projeto.
+                    </div>
+                    <div className="p-3 bg-white border border-zinc-200 rounded-sm">
+                      <span className="font-bold text-zinc-900 block mb-1">Armazém de Contratos</span>
+                      Interface de consulta direta dos contratos arquivados pelo robô do Produto 01.
+                    </div>
+                    <div className="p-3 bg-white border border-zinc-200 rounded-sm">
+                      <span className="font-bold text-zinc-900 block mb-1">Central de Notificações</span>
+                      Alertas automáticos via e-mail e push a cada alteração ou liberação de nova prancha.
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tabela de Investimento no Sistema (Referência vs Condição Especial) */}
+                <div className="border border-zinc-200 rounded-sm overflow-hidden bg-white">
+                  <div className="bg-zinc-50 px-5 py-3 border-b border-zinc-200 flex items-center justify-between">
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-zinc-700">
+                      Investimento no Sistema de Projetos & Obras (Produto 02)
+                    </span>
+                    <span className="text-xs text-emerald-700 font-mono font-bold">
+                      Condição Especial Construtora Queiroz Silveira
+                    </span>
+                  </div>
+                  <table className="w-full text-left text-xs sm:text-sm">
+                    <thead>
+                      <tr className="border-b border-zinc-200 text-zinc-500 font-mono text-[11px] uppercase bg-white">
+                        <th className="py-3 px-4 font-semibold">Item</th>
+                        <th className="py-3 px-4 font-semibold">Referência de Tabela</th>
+                        <th className="py-3 px-4 font-semibold">Condição Especial QS</th>
+                        <th className="py-3 px-4 font-semibold text-right">Economia Direta</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-zinc-200">
+                      <tr>
+                        <td className="py-3.5 px-4 font-bold text-zinc-900">Desenvolvimento do Sistema</td>
+                        <td className="py-3.5 px-4 font-mono text-zinc-400 line-through">R$ 7.500,00</td>
+                        <td className="py-3.5 px-4 font-mono font-bold text-[#8e1529]">
+                          R$ 4.250,00
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-emerald-700 font-bold text-right">
+                          - R$ 3.250,00 (43% OFF)
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-3.5 px-4 font-bold text-zinc-900">Manutenção e Suporte Mensal</td>
+                        <td className="py-3.5 px-4 font-mono text-zinc-400 line-through">R$ 1.500,00/mês</td>
+                        <td className="py-3.5 px-4 font-mono font-bold text-[#8e1529]">
+                          R$ 625,00/mês
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-emerald-700 font-bold text-right">
+                          - R$ 875,00/mês (58% OFF)
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              {/* ========================================================
+                  SEÇÃO 03: CONSOLIDAÇÃO DA PROPOSTA & SIMULADOR
+              ======================================================== */}
+              <section id="consolidacao" className="scroll-mt-24 space-y-6 pt-6 border-t border-zinc-200">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2.5 py-0.5 rounded-sm bg-zinc-800 text-white font-mono text-[10px] uppercase font-bold tracking-wider">
+                      CONSOLIDAÇÃO
+                    </span>
+                    <span className="text-xs font-mono text-zinc-500">Visão Geral dos Custos</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
+                    Consolidação Comercial & Valor Final
+                  </h2>
+                  <p className="text-sm text-zinc-600 mt-1 max-w-2xl">
+                    Transparência absoluta entre os custos de engenharia inicial e a sustentação contínua da infraestrutura.
+                  </p>
+                </div>
+
+                {/* Bloco de Consolidação Rápida */}
+                <div className="p-6 bg-zinc-900 text-white rounded-sm">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                      <div className="text-[11px] font-mono tracking-wider uppercase text-amber-400 font-bold">
+                        DESENVOLVIMENTO DOS DOIS PRODUTOS
+                      </div>
+                      <div className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight mt-1">
+                        R$ 6.250,00
+                      </div>
+                      <p className="text-xs text-zinc-400 mt-2 max-w-lg">
+                        Compreende o desenvolvimento do Robô Clicksign (R$ 2.000,00) somado ao Sistema de Gestão de Projetos e Obras (R$ 4.250,00).
+                      </p>
+                    </div>
+
+                    <div className="border-t md:border-t-0 md:border-l border-zinc-700 pt-4 md:pt-0 md:pl-6 space-y-2 text-xs font-mono">
+                      <div>
+                        <span className="text-zinc-400 block">Implementação no Robô:</span>
+                        <span className="font-bold text-white text-sm">+ R$ 500,00 por CNPJ</span>
+                      </div>
+                      <div>
+                        <span className="text-zinc-400 block">Manutenção do Sistema:</span>
+                        <span className="font-bold text-emerald-400 text-sm">R$ 625,00 / mês</span>
+                      </div>
+                      <div>
+                        <span className="text-zinc-400 block">Manutenção do Robô:</span>
+                        <span className="text-zinc-300 text-xs">R$ 100,00 por CNPJ (periodicidade a confirmar)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Simulador Interativo */}
+                <ProposalCalculator />
+              </section>
+
+              {/* ========================================================
+                  SEÇÃO 04: DEFINIÇÕES PARA O FECHAMENTO & PRÓXIMOS PASSOS
+              ======================================================== */}
+              <section id="fechamento" className="scroll-mt-24 space-y-6 pt-6 border-t border-zinc-200">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2.5 py-0.5 rounded-sm bg-[#8e1529] text-white font-mono text-[10px] uppercase font-bold tracking-wider">
+                      ETAPAS FINAIS
+                    </span>
+                    <span className="text-xs font-mono text-zinc-500">Alinhamento Técnico & Contratual</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
+                    Definições para o Fechamento
+                  </h2>
+                  <p className="text-sm text-zinc-600 mt-1 max-w-2xl">
+                    Itens a serem alinhados na reunião de validação da proposta para início imediato do desenvolvimento.
+                  </p>
+                </div>
+
+                {/* 3 Pilares de Fechamento */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <div className="p-5 border border-zinc-200 rounded-sm bg-white">
+                    <div className="w-8 h-8 rounded-sm bg-zinc-100 flex items-center justify-center font-mono font-bold text-xs text-zinc-700 mb-3">
+                      A
+                    </div>
+                    <h3 className="font-bold text-sm text-zinc-900">Condições Comerciais</h3>
+                    <ul className="mt-3 space-y-2 text-xs text-zinc-600">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#8e1529] flex-shrink-0 mt-0.5" />
+                        <span>Definição da quantidade inicial de CNPJs / SPEs.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#8e1529] flex-shrink-0 mt-0.5" />
+                        <span>Periodicidade da manutenção do robô (mensal, trimestral ou anual).</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#8e1529] flex-shrink-0 mt-0.5" />
+                        <span>Cronograma de entrega e condições de faturamento.</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="p-5 border border-zinc-200 rounded-sm bg-white">
+                    <div className="w-8 h-8 rounded-sm bg-zinc-100 flex items-center justify-center font-mono font-bold text-xs text-zinc-700 mb-3">
+                      B
+                    </div>
+                    <h3 className="font-bold text-sm text-zinc-900">Fluxo dos Projetos</h3>
+                    <ul className="mt-3 space-y-2 text-xs text-zinc-600">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#8e1529] flex-shrink-0 mt-0.5" />
+                        <span>Definir se a "retirada" corresponde ao download ou à marcação formal de edição.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#8e1529] flex-shrink-0 mt-0.5" />
+                        <span>Escolher canais oficiais de notificação (E-mail, WhatsApp ou painel web).</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#8e1529] flex-shrink-0 mt-0.5" />
+                        <span>Aprovar a estrutura padrão de pastas por disciplina técnica.</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="p-5 border border-zinc-200 rounded-sm bg-white">
+                    <div className="w-8 h-8 rounded-sm bg-zinc-100 flex items-center justify-center font-mono font-bold text-xs text-zinc-700 mb-3">
+                      C
+                    </div>
+                    <h3 className="font-bold text-sm text-zinc-900">Operação e Manutenção</h3>
+                    <ul className="mt-3 space-y-2 text-xs text-zinc-600">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#8e1529] flex-shrink-0 mt-0.5" />
+                        <span>Concessão de credenciais de acesso de teste ao Clicksign e ao servidor.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#8e1529] flex-shrink-0 mt-0.5" />
+                        <span>Alinhamento de infraestrutura de rede e pastas compartilhadas.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#8e1529] flex-shrink-0 mt-0.5" />
+                        <span>Validação dos níveis de SLA e suporte técnico aos engenheiros.</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Box de Ação & Assinatura da Proposta */}
+                <div className="p-8 border border-zinc-200 rounded-sm bg-zinc-50 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                  <div className="space-y-1">
+                    <h3 className="text-xl font-bold text-zinc-900">
+                      Pronto para iniciar o projeto com a ViraWeb?
+                    </h3>
+                    <p className="text-xs sm:text-sm text-zinc-600 max-w-lg">
+                      Clique no botão ao lado para confirmar o interesse na proposta e agendar a reunião de fechamento e kick-off de desenvolvimento.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => openWhatsApp("Aprovação Formal")}
+                      className="px-6 py-3.5 bg-[#8e1529] hover:bg-[#780f21] text-white text-xs sm:text-sm font-bold uppercase tracking-wider rounded-sm cursor-pointer transition-colors shadow-xs flex items-center gap-2"
+                      aria-label="Avançar com a proposta via WhatsApp"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span>Aprovar Proposta Agora</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      className="px-4 py-3.5 bg-white border border-zinc-300 hover:bg-zinc-100 text-zinc-700 text-xs sm:text-sm font-medium rounded-sm cursor-pointer transition-colors flex items-center gap-2"
+                      aria-label="Salvar proposta como documento PDF"
+                    >
+                      <Printer className="w-4 h-4" />
+                      <span>Salvar em PDF</span>
+                    </button>
+                  </div>
+                </div>
+              </section>
+            </main>
+          </div>
+        </div>
+
+        {/* Rodapé Institucional */}
+        <footer className="mt-16 border-t border-zinc-200 bg-white py-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div className="flex items-center gap-3">
+              <a
+                href="https://viraweb.online"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:opacity-80 transition-opacity cursor-pointer"
+                title="ViraWeb Soluções Digitais"
+              >
+                <Image
+                  src="/viraweb.png"
+                  alt="ViraWeb"
+                  width={110}
+                  height={32}
+                  className="h-6 w-auto object-contain"
+                />
+              </a>
+              <span className="text-zinc-300">|</span>
+              <span className="text-xs font-semibold text-zinc-700">
+                Soluções Digitais para Construção Civil
               </span>
             </div>
-          </div>
-        </section>
 
-        {/* 1. Diretrizes Estratégicas do Projeto */}
-        <section className="py-12 border-b border-slate-200">
-          <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#6880f2] mb-1">
-            Seção 01
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-950 mb-4">
-            1. Diretrizes Estratégicas do Projeto
-          </h2>
-          <p className="text-sm text-slate-700 leading-relaxed mb-6">
-            O <strong>NXTGEN</strong> é concebido como um ecossistema digital jovem para as Gerações Alpha e Z (
-            <em>&ldquo;The Future Pays More / Build. Don&apos;t Bet&rdquo;</em>), integrando benefícios, banking, eventos presenciais, investimentos e bem-estar em um ambiente único e modular.
-          </p>
-
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-4">
-            Premissas Técnicas Centrais:
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-5 border border-slate-200 rounded-lg bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300">
-              <div className="text-xs font-bold text-slate-900 mb-1.5 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#8562f3]" />
-                Modularidade Total
-              </div>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Cada fase entrega um módulo funcional independente e escalável, permitindo evolução contínua sem retrabalho.
-              </p>
-            </div>
-
-            <div className="p-5 border border-slate-200 rounded-lg bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300">
-              <div className="text-xs font-bold text-slate-900 mb-1.5 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#6391f4]" />
-                Orquestração de Pagamentos & Split
-              </div>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Estrutura multi-gateway desacoplada (<code className="font-mono text-xs bg-slate-100 px-1 py-0.5 rounded">PaymentProvider</code> com suporte a Pagar.me, Mercado Pago e Asaas) com divisão automática de recebíveis entre a plataforma e os parceiros.
-              </p>
-            </div>
-
-            <div className="p-5 border border-slate-200 rounded-lg bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300">
-              <div className="text-xs font-bold text-slate-900 mb-1.5 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#42b4f8]" />
-                Integrações Especializadas (BaaS e Corretora)
-              </div>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Front-end proprietário conectado a provedores regulados (BaaS para banco digital e corretora para investimentos), garantindo conformidade com BACEN e CVM.
-              </p>
-            </div>
-
-            <div className="p-5 border border-slate-200 rounded-lg bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm hover:border-slate-300">
-              <div className="text-xs font-bold text-slate-900 mb-1.5 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-slate-900" />
-                Segurança e Anti-Fraude
-              </div>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Emissão de vouchers e ingressos via <strong>QR Code dinâmico com rotação de token temporizado</strong> para coibir capturas de tela e reaproveitamento indevido.
-              </p>
+            <div className="text-xs text-zinc-500 font-mono">
+              © 2026 ViraWeb Soluções Digitais • Proposta Comercial Queiroz Silveira • Todos os direitos reservados
             </div>
           </div>
-        </section>
-
-        {/* 2. Quadro Resumo de Investimento (5 Fases) */}
-        <section className="py-12 border-b border-slate-200">
-          <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#6880f2] mb-1">
-            Seção 02
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-950 mb-4">
-            2. Quadro Resumo de Investimento (5 Fases)
-          </h2>
-
-          {/* Tabela de Investimento */}
-          <div className="overflow-x-auto border border-slate-200 rounded-lg mb-6">
-            <table className="w-full text-left text-xs sm:text-sm border-collapse">
-              <thead>
-                <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold">
-                  <th className="py-3 px-4 text-center">Fase</th>
-                  <th className="py-3 px-4">Módulo / Escopo Principal</th>
-                  <th className="py-3 px-4 text-right">Investimento da Fase</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 text-slate-700">
-                {PHASES.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-4 text-center font-bold text-slate-900">
-                      Fase {p.id}
-                    </td>
-                    <td className="py-3 px-4">
-                      <strong className="text-slate-950">{p.name}</strong> ({p.subtitle})
-                    </td>
-                    <td className="py-3 px-4 text-right font-bold text-slate-950">
-                      {formatBRL(p.price)}
-                    </td>
-                  </tr>
-                ))}
-                <tr className="bg-slate-50 font-bold border-t-2 border-slate-300">
-                  <td className="py-3.5 px-4 text-center text-slate-950">
-                    TOTAL
-                  </td>
-                  <td className="py-3.5 px-4 text-slate-950">
-                    Ecossistema Completo NXTGEN (5 Fases)
-                  </td>
-                  <td className="py-3.5 px-4 text-right text-base text-slate-950">
-                    {formatBRL(32500)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Distribuição Gráfica com Degradê NXTGEN */}
-          <div className="p-5 bg-slate-50 border border-slate-200 rounded-lg">
-            <div className="flex justify-between items-center mb-2 text-xs font-semibold text-slate-700">
-              <span>Distribuição Financeira por Fase</span>
-              <span className="font-mono text-slate-500">Total: R$ 32.500,00 (100%)</span>
-            </div>
-
-            {/* Barra Contínua no degradê */}
-            <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden flex">
-              <div style={{ width: "12.3%" }} className="h-full bg-[#8562f3]" title="Fase 1: 12,3%" />
-              <div style={{ width: "16.9%" }} className="h-full bg-[#7375f5]" title="Fase 2: 16,9%" />
-              <div style={{ width: "20.0%" }} className="h-full bg-[#6485f2]" title="Fase 3: 20,0%" />
-              <div style={{ width: "23.1%" }} className="h-full bg-[#539ef5]" title="Fase 4: 23,1%" />
-              <div style={{ width: "27.7%" }} className="h-full bg-[#42b4f8]" title="Fase 5: 27,7%" />
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-200 text-xs font-mono text-slate-700 space-y-1">
-              <div>Fase 1 (NXT PASS):&nbsp;&nbsp;&nbsp;&nbsp;[====]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R$ 4.000,00 (12,3%)</div>
-              <div>Fase 2 (NXT BANK):&nbsp;&nbsp;&nbsp;&nbsp;[=====]&nbsp;&nbsp;&nbsp;&nbsp;R$ 5.500,00 (16,9%)</div>
-              <div>Fase 3 (NXT LIVE):&nbsp;&nbsp;&nbsp;&nbsp;[======]&nbsp;&nbsp;&nbsp;R$ 6.500,00 (20,0%)</div>
-              <div>Fase 4 (NXT INVEST):&nbsp;&nbsp;[=======]&nbsp;&nbsp;R$ 7.500,00 (23,1%)</div>
-              <div>Fase 5 (NXT ME):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[=========] R$ 9.000,00 (27,7%)</div>
-              <div className="text-slate-400">----------------------------------------------------</div>
-              <div className="font-bold text-slate-950">
-                TOTAL DO PROJETO:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R$ 32.500,00 (100%)
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 3. Detalhamento do Escopo por Fase */}
-        <section className="py-12 border-b border-slate-200">
-          <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#6880f2] mb-1">
-            Seção 03
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-950 mb-2">
-            3. Detalhamento do Escopo por Fase
-          </h2>
-          <p className="text-sm text-slate-600 mb-6">
-            Evolução arquitetural modular e independente:
-          </p>
-
-          {/* Pipeline Visual Sequencial */}
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-800 mb-8 overflow-x-auto whitespace-nowrap">
-            F1: NXT PASS (R$ 4.000) → F2: NXT BANK (R$ 5.500) → F3: NXT LIVE (R$ 6.500) → F4: NXT INVEST (R$ 7.500) → F5: NXT ME (R$ 9.000)
-          </div>
-
-          {/* Seletor de Abas com Efeito Suave */}
-          <div className="flex flex-wrap gap-2 border-b border-slate-200 pb-3 mb-6">
-            {PHASES.map((p) => {
-              const isSelected = activeTab === p.id;
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => setActiveTab(p.id)}
-                  className={`px-4 py-2 text-xs font-bold rounded transition-all duration-150 relative ${
-                    isSelected
-                      ? "bg-slate-900 text-white shadow-sm"
-                      : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50"
-                  }`}
-                >
-                  Fase {p.id}: {p.name}
-                  {isSelected && (
-                    <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-gradient-to-r from-[#8562f3] to-[#42b4f8] rounded-full" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Card Ativo com Animação Fade-In */}
-          <div
-            key={currentPhase.id}
-            className="animate-fade-in border border-slate-200 rounded-lg p-6 sm:p-8 bg-white shadow-sm mb-10"
-          >
-            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between pb-4 border-b border-slate-200 mb-6 gap-2">
-              <div>
-                <span className="text-xs font-bold text-[#6880f2] uppercase tracking-wider">
-                  Módulo 0{currentPhase.id}
-                </span>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-950 mt-0.5">
-                  Fase {currentPhase.id}: {currentPhase.name} — {currentPhase.subtitle}
-                </h3>
-              </div>
-              <div className="text-left sm:text-right">
-                <span className="text-xs text-slate-500 block">Investimento:</span>
-                <span className="text-2xl font-extrabold text-slate-950">
-                  {formatBRL(currentPhase.price)}
-                </span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {currentPhase.categories.map((cat, idx) => (
-                <div key={idx} className="p-4 bg-slate-50/70 border border-slate-200 rounded">
-                  <h4 className="text-xs sm:text-sm font-bold text-slate-950 mb-2">
-                    {cat.title}:
-                  </h4>
-                  <ul className="space-y-1.5 pl-4 text-xs sm:text-sm text-slate-700 list-disc">
-                    {cat.items.map((item, itemIdx) => (
-                      <li key={itemIdx} className="leading-relaxed">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="text-xs text-slate-600">
-                <strong>Condições:</strong> 50% de entrada ({formatBRL(currentPhase.downPayment)}) e 50% na homologação ({formatBRL(currentPhase.finalPayment)}).
-              </div>
-              <button
-                onClick={() => openWhatsApp(`Fase ${currentPhase.id}: ${currentPhase.name}`)}
-                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded text-xs font-bold transition-all active:scale-95"
-              >
-                Aprovar Fase {currentPhase.id} ({formatBRL(currentPhase.price)})
-              </button>
-            </div>
-          </div>
-
-          {/* Todas as Fases Documentadas na Íntegra */}
-          <div className="space-y-6 pt-2">
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Escopo Completo das 5 Fases:
-            </div>
-
-            {PHASES.map((p) => (
-              <div
-                key={p.id}
-                className="border border-slate-200 rounded-lg p-6 bg-slate-50/60 transition-all duration-200 hover:bg-slate-50"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between pb-3 border-b border-slate-200 mb-4 gap-2">
-                  <h3 className="text-base font-bold text-slate-950">
-                    Fase {p.id}: {p.name} — <span className="font-normal text-slate-600">{p.subtitle}</span>
-                  </h3>
-                  <span className="text-sm font-bold text-slate-900">
-                    {formatBRL(p.price)}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {p.categories.map((cat, catIdx) => (
-                    <div key={catIdx}>
-                      <div className="text-xs font-bold text-slate-900 mb-1">
-                        • {cat.title}
-                      </div>
-                      <ul className="space-y-1 pl-4 text-xs text-slate-600 list-disc">
-                        {cat.items.map((item, itemIdx) => (
-                          <li key={itemIdx} className="leading-relaxed">
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 4. Forma de Pagamento por Marcos de Homologação */}
-        <section className="py-12 border-b border-slate-200">
-          <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#6880f2] mb-1">
-            Seção 04
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-950 mb-3">
-            4. Forma de Pagamento por Marcos de Homologação
-          </h2>
-          <p className="text-sm text-slate-700 leading-relaxed mb-6">
-            A contratação e pagamento ocorrem por fase entregue e homologada:
-          </p>
-
-          <div className="border border-slate-200 rounded-lg bg-white divide-y divide-slate-200 text-xs sm:text-sm">
-            {PHASES.map((p) => (
-              <div
-                key={p.id}
-                className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-slate-50 transition-colors"
-              >
-                <div>
-                  <strong className="text-slate-950">
-                    {p.id}. Fase {p.id} — {p.name}:
-                  </strong>{" "}
-                  <span className="text-slate-900 font-bold">{formatBRL(p.price)}</span>
-                </div>
-                <div className="text-slate-600 text-xs font-mono">
-                  (50% no início da fase: <strong>{formatBRL(p.downPayment)}</strong> e 50% na homologação: <strong>{formatBRL(p.finalPayment)}</strong>)
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 5. Resumo das Entregas Técnicas por Fase */}
-        <section className="py-12">
-          <div className="text-xs font-mono font-semibold uppercase tracking-wider text-[#6880f2] mb-1">
-            Seção 05
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-950 mb-4">
-            5. Resumo das Entregas Técnicas por Fase
-          </h2>
-
-          <div className="overflow-x-auto border border-slate-200 rounded-lg">
-            <table className="w-full text-left text-xs sm:text-sm border-collapse">
-              <thead>
-                <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold">
-                  <th className="py-3 px-4 text-center">Fase</th>
-                  <th className="py-3 px-4">Nome</th>
-                  <th className="py-3 px-4 text-center">Valor</th>
-                  <th className="py-3 px-4">Principais Entregas Técnicas</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 text-slate-700">
-                {PHASES.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-4 text-center font-bold text-slate-900">
-                      {p.id}
-                    </td>
-                    <td className="py-3 px-4 font-bold text-slate-950 whitespace-nowrap">
-                      {p.name}
-                    </td>
-                    <td className="py-3 px-4 text-center font-bold text-slate-950 whitespace-nowrap">
-                      {formatBRL(p.price)}
-                    </td>
-                    <td className="py-3 px-4 text-slate-600 leading-relaxed">
-                      {p.deliverablesSummary}
-                    </td>
-                  </tr>
-                ))}
-                <tr className="bg-slate-50 font-bold border-t-2 border-slate-300">
-                  <td className="py-3.5 px-4 text-center text-slate-950">
-                    TOTAL
-                  </td>
-                  <td className="py-3.5 px-4 text-slate-950">
-                    5 FASES
-                  </td>
-                  <td className="py-3.5 px-4 text-center text-base text-slate-950 whitespace-nowrap">
-                    {formatBRL(32500)}
-                  </td>
-                  <td className="py-3.5 px-4 text-slate-950 font-bold">
-                    Ecossistema Completo NXTGEN Entregue e Homologado
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Bloco de Fechamento com Cores ViraWeb */}
-          <div className="mt-12 p-8 border border-slate-200 rounded-lg bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
-            <div>
-              <div className="inline-block text-[10px] font-bold uppercase tracking-wider text-amber-400 mb-1">
-                Avançar com a Engenharia
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold">
-                Pronto para iniciar o Ecossistema NXTGEN?
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl leading-relaxed">
-                Confirmando a proposta comercial, realizamos o alinhamento técnico e o kickoff imediato da Fase 1 (NXT PASS).
-              </p>
-            </div>
-
-            <button
-              onClick={() => openWhatsApp("completo")}
-              className="px-6 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs rounded transition-all shadow-sm active:scale-95 whitespace-nowrap"
-            >
-              Aprovar Proposta Agora
-            </button>
-          </div>
-        </section>
-      </main>
-
-      {/* Rodapé Institucional com Ambas as Marcas */}
-      <footer className="border-t border-slate-200 bg-slate-50 py-8 px-6 text-xs text-slate-600">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-          <div className="flex items-center gap-3">
-            <a
-              href="https://viraweb.online"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:opacity-80 transition-opacity"
-            >
-              <img
-                src="/viraweb.png"
-                alt="ViraWeb"
-                className="h-6 w-auto object-contain"
-              />
-            </a>
-
-            <span className="text-slate-300">|</span>
-
-            <div className="bg-black px-2 py-1 rounded">
-              <img
-                src="/nxtgen-logo.png"
-                alt="NXTGEN"
-                className="h-5 w-auto object-contain"
-              />
-            </div>
-
-            <span className="hidden sm:inline text-slate-500">
-              Ecossistema Digital NXTGEN • Versão 2.1
-            </span>
-          </div>
-
-          <div className="text-slate-500">
-            © 2026 ViraWeb Soluções Digitais • Todos os direitos reservados
-          </div>
-        </div>
-      </footer>
-    </div>
+        </footer>
+      </div>
+    </>
   );
 }
